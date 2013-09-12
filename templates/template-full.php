@@ -1,11 +1,8 @@
 <?php
 /**
- * The template for displaying all pages.
+ * Template Name: Full Width
  *
- * This is the template that displays all pages by default.
- * Please note that this is the WordPress construct of pages
- * and that other 'pages' on your WordPress site will use a
- * different template.
+ * The template for displaying full width pages.
  *
  * @package Starter
  */
@@ -14,7 +11,7 @@ get_header(); ?>
 
 <div class="row">
 
-	<div id="primary" class="col-lg-8">
+	<div id="primary" class="col-lg-12">
 
 			<?php while ( have_posts() ) : the_post(); ?>
 
@@ -29,8 +26,6 @@ get_header(); ?>
 			<?php endwhile; // end of the loop. ?>
 
 	</div><!-- #primary -->
-	
-	<?php get_sidebar(); ?>
 	
 </div><!-- .row -->
 
