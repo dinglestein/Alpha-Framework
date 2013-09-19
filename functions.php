@@ -19,3 +19,9 @@ require get_template_directory() . '/inc/scripts.php';
 
 // Custom sidebar widgets 
 require get_template_directory() . '/inc/widgets.php';
+
+// Custom Post Types 
+require get_template_directory() . '/inc/post-types.php';
+
+// Custom Taxonomies 
+require get_template_directory() . '/inc/taxonomies.php';

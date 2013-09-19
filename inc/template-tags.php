@@ -7,54 +7,6 @@
  * @package Starter
  */
 
-if ( ! function_exists( 'starter_content_nav' ) ) :
-/**
- * Display navigation to next/previous pages when applicable
- */
-function starter_content_nav( $nav_id ) {
-	global $wp_query, $post;
-
-	// Don't print empty markup on single pages if there's nowhere to navigate.
-	if ( is_single() ) {
-		$previous = ( is_attachment() ) ? get_post( $post->post_parent ) : get_adjacent_post( false, '', true );
-		$next = get_adjacent_post( false, '', false );
-
-		if ( ! $next && ! $previous )
-			return;
-	}
-
-	// Don't print empty markup in archives if there's only one page.
-	if ( $wp_query->max_num_pages < 2 && ( is_home() || is_archive() || is_search() ) )
-		return;
-
-	$nav_class = ( is_single() ) ? 'post-navigation' : 'paging-navigation';
-
-	?>
-	<nav role="navigation" id="<?php echo esc_attr( $nav_id ); ?>" class="<?php echo $nav_class; ?>">
-		<h1 class="screen-reader-text"><?php _e( 'Post navigation', 'starter' ); ?></h1>
-
-	<?php if ( is_single() ) : // navigation links for single posts ?>
-
-		<?php previous_post_link( '<div class="nav-previous">%link</div>', '<span class="meta-nav">' . _x( '&larr;', 'Previous post link', 'starter' ) . '</span> %title' ); ?>
-		<?php next_post_link( '<div class="nav-next">%link</div>', '%title <span class="meta-nav">' . _x( '&rarr;', 'Next post link', 'starter' ) . '</span>' ); ?>
-
-	<?php elseif ( $wp_query->max_num_pages > 1 && ( is_home() || is_archive() || is_search() ) ) : // navigation links for home, archive, and search pages ?>
-
-		<?php if ( get_next_posts_link() ) : ?>
-		<div class="nav-previous"><?php next_posts_link( __( '<span class="meta-nav">&larr;</span> Older posts', 'starter' ) ); ?></div>
-		<?php endif; ?>
-
-		<?php if ( get_previous_posts_link() ) : ?>
-		<div class="nav-next"><?php previous_posts_link( __( 'Newer posts <span class="meta-nav">&rarr;</span>', 'starter' ) ); ?></div>
-		<?php endif; ?>
-
-	<?php endif; ?>
-
-	</nav><!-- #<?php echo esc_html( $nav_id ); ?> -->
-	<?php
-}
-endif; // starter_content_nav
-
 if ( ! function_exists( 'starter_comment' ) ) :
 /**
  * Template for comments and pingbacks.
@@ -115,69 +67,99 @@ function starter_comment( $comment, $args, $depth ) {
 }
 endif; // ends check for starter_comment()
 
-
-if ( ! function_exists( 'starter_posted_on' ) ) :
 /**
- * Prints HTML with meta information for the current post-date/time and author.
+ * Extends WP NAV MENU walker menu
  */
-function starter_posted_on() {
-	$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time>';
-	if ( get_the_time( 'U' ) !== get_the_modified_time( 'U' ) )
-		$time_string .= '<time class="updated" datetime="%3$s">%4$s</time>';
+class Alpha_Walker_Nav_Menu extends Walker_Nav_Menu {
 
-	$time_string = sprintf( $time_string,
-		esc_attr( get_the_date( 'c' ) ),
-		esc_html( get_the_date() ),
-		esc_attr( get_the_modified_date( 'c' ) ),
-		esc_html( get_the_modified_date() )
-	);
+	
+	function start_lvl( &$output, $depth = 0, $args = Array() ) {
 
-	printf( __( '<span class="posted-on">Posted on %1$s</span><span class="byline"> by %2$s</span>', 'starter' ),
-		sprintf( '<a href="%1$s" title="%2$s" rel="bookmark">%3$s</a>',
-			esc_url( get_permalink() ),
-			esc_attr( get_the_time() ),
-			$time_string
-		),
-		sprintf( '<span class="author vcard"><a class="url fn n" href="%1$s" title="%2$s">%3$s</a></span>',
-			esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ),
-			esc_attr( sprintf( __( 'View all posts by %s', 'starter' ), get_the_author() ) ),
-			esc_html( get_the_author() )
-		)
-	);
-}
-endif;
-
-/**
- * Returns true if a blog has more than 1 category
- */
-function starter_categorized_blog() {
-	if ( false === ( $all_the_cool_cats = get_transient( 'all_the_cool_cats' ) ) ) {
-		// Create an array of all the categories that are attached to posts
-		$all_the_cool_cats = get_categories( array(
-			'hide_empty' => 1,
-		) );
-
-		// Count the number of categories that are attached to the posts
-		$all_the_cool_cats = count( $all_the_cool_cats );
-
-		set_transient( 'all_the_cool_cats', $all_the_cool_cats );
+		$indent = str_repeat( "\t", $depth );
+		$output	   .= "\n$indent<ul class=\"dropdown-menu\">\n";
+		
 	}
 
-	if ( '1' != $all_the_cool_cats ) {
-		// This blog has more than 1 category so starter_categorized_blog should return true
-		return true;
-	} else {
-		// This blog has only 1 category so starter_categorized_blog should return false
-		return false;
-	}
-}
+	function start_el( &$output, $item, $depth = 0, $args = array(), $id = 0 ) {
+		
+		$indent = ( $depth ) ? str_repeat( "\t", $depth ) : '';
 
-/**
- * Flush out the transients used in starter_categorized_blog
- */
-function starter_category_transient_flusher() {
-	// Like, beat it. Dig?
-	delete_transient( 'all_the_cool_cats' );
+		$li_attributes = '';
+		$class_names = $value = '';
+
+		$classes = empty( $item->classes ) ? array() : (array) $item->classes;
+		$classes[] = ($args->has_children) ? 'dropdown' : '';
+		$classes[] = ($item->current || $item->current_item_ancestor) ? 'active' : '';
+		$classes[] = 'menu-item-' . $item->ID;
+
+
+		$class_names = join( ' ', apply_filters( 'nav_menu_css_class', array_filter( $classes ), $item, $args ) );
+		$class_names = ' class="' . esc_attr( $class_names ) . '"';
+
+		$id = apply_filters( 'nav_menu_item_id', 'menu-item-'. $item->ID, $item, $args );
+		$id = strlen( $id ) ? ' id="' . esc_attr( $id ) . '"' : '';
+
+		$output .= $indent . '<li' . $id . $value . $class_names . $li_attributes . '>';
+
+		$attributes  = ! empty( $item->attr_title ) ? ' title="'  . esc_attr( $item->attr_title ) .'"' : '';
+		$attributes .= ! empty( $item->target )     ? ' target="' . esc_attr( $item->target     ) .'"' : '';
+		$attributes .= ! empty( $item->xfn )        ? ' rel="'    . esc_attr( $item->xfn        ) .'"' : '';
+		$attributes .= ! empty( $item->url )        ? ' href="'   . esc_attr( $item->url        ) .'"' : '';
+		$attributes .= ($args->has_children) 	    ? ' class="dropdown-toggle" data-toggle="dropdown"' : '';
+
+		$item_output = $args->before;
+		$item_output .= '<a'. $attributes .'>';
+		$item_output .= $args->link_before . apply_filters( 'the_title', $item->title, $item->ID ) . $args->link_after;
+		$item_output .= ($args->has_children) ? ' </a>' : '</a>';
+		$item_output .= $args->after;
+
+		$output .= apply_filters( 'walker_nav_menu_start_el', $item_output, $item, $depth, $args );
+	}
+
+	function display_element( $element, &$children_elements, $max_depth, $depth=0, $args, &$output ) {
+		
+		if ( !$element )
+			return;
+		
+		$id_field = $this->db_fields['id'];
+
+		//display this element
+		if ( is_array( $args[0] ) ) 
+			$args[0]['has_children'] = ! empty( $children_elements[$element->$id_field] );
+		else if ( is_object( $args[0] ) ) 
+			$args[0]->has_children = ! empty( $children_elements[$element->$id_field] ); 
+		$cb_args = array_merge( array(&$output, $element, $depth), $args);
+		call_user_func_array(array(&$this, 'start_el'), $cb_args);
+
+		$id = $element->$id_field;
+
+		// descend only when the depth is right and there are childrens for this element
+		if ( ($max_depth == 0 || $max_depth > $depth+1 ) && isset( $children_elements[$id]) ) {
+
+			foreach( $children_elements[ $id ] as $child ){
+
+				if ( !isset($newlevel) ) {
+					$newlevel = true;
+					//start the child delimiter
+					$cb_args = array_merge( array(&$output, $depth), $args);
+					call_user_func_array(array(&$this, 'start_lvl'), $cb_args);
+				}
+				$this->display_element( $child, $children_elements, $max_depth, $depth + 1, $args, $output );
+			}
+				unset( $children_elements[ $id ] );
+		}
+
+		if ( isset($newlevel) && $newlevel ){
+			//end the child delimiter
+			$cb_args = array_merge( array(&$output, $depth), $args);
+			call_user_func_array(array(&$this, 'end_lvl'), $cb_args);
+		}
+
+		//end this element
+		$cb_args = array_merge( array(&$output, $element, $depth), $args);
+		call_user_func_array(array(&$this, 'end_el'), $cb_args);
+		
+	}
+	
+
 }
-add_action( 'edit_category', 'starter_category_transient_flusher' );
-add_action( 'save_post',     'starter_category_transient_flusher' );

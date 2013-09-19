@@ -26,14 +26,21 @@
 			<h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" title="<?php echo esc_attr( get_bloginfo( 'name', 'display' ) ); ?>" rel="home"><?php bloginfo( 'name' ); ?></a></h1>
 		</div>
 
-		<nav id="site-navigation" class="navbar">
-		
+		<div class="navbar-header">
+	    	<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+		    </button>
+	    </div>
+		<nav id="site-navigation" class="collapse navbar-collapse navbar-ex1-collapse">
 			<?php 
 				wp_nav_menu( 
 					array(
 						'theme_location' => 'primary', 
-						'menu_class' => 'nav nav-pills',
-						'navbar-default' => '<ul id="%1$s" class="%2$s">%3$s</ul>'
+						'menu_class' => 'nav navbar-nav',
+						'walker' => new Alpha_Walker_Nav_Menu()
 					) 
 				); 
 			?>

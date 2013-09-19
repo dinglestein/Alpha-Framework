@@ -24,8 +24,6 @@ get_header(); ?>
 
 			<?php endwhile; ?>
 
-			<?php starter_content_nav( 'nav-below' ); ?>
-
 		<?php else : ?>
 
 			<?php get_template_part( 'no-results', 'search' ); ?>
