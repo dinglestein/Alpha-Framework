@@ -43,10 +43,6 @@ get_header(); ?>
 
 				<div class="entry-content">
 					<div class="entry-attachment">
-						<div class="attachment">
-							<?php starter_the_attached_image(); ?>
-						</div><!-- .attachment -->
-
 						<?php if ( has_excerpt() ) : ?>
 						<div class="entry-caption">
 							<?php the_excerpt(); ?>
@@ -59,7 +55,7 @@ get_header(); ?>
 						wp_link_pages( array(
 							'before' => '<div class="page-links">' . __( 'Pages:', 'starter' ),
 							'after'  => '</div>',
-						) );
+						));
 					?>
 				</div><!-- .entry-content -->
 

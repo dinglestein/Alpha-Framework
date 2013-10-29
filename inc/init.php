@@ -41,6 +41,33 @@ function starter_setup() {
 	 */
 	add_theme_support( 'post-formats', array( 'aside', 'image', 'video', 'quote', 'link' ) );
 	
+	
+	/**
+	 * Enable Custom Excerpt Lengths
+	 */
+	function wpe_excerptlength_featured_sm($length) {
+		return 10;
+	}
+	function wpe_excerptmore($more) {
+		return '...';
+	}
+	
+	function wpe_excerpt($length_callback='', $more_callback='') {
+		global $post;
+		
+		if(function_exists($length_callback)){
+			add_filter('excerpt_length', $length_callback);
+		}
+		if(function_exists($more_callback)){
+			add_filter('excerpt_more', $more_callback);
+		}
+		$output = get_the_excerpt();
+		$output = apply_filters('wptexturize', $output);
+		$output = apply_filters('convert_chars', $output);
+		$output = '<p>'.$output.'</p>';
+		echo $output;
+	}
+	
 }
 endif; // starter_setup
 

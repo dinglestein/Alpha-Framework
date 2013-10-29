@@ -20,6 +20,9 @@ require get_template_directory() . '/inc/scripts.php';
 // Custom sidebar widgets 
 require get_template_directory() . '/inc/widgets.php';
 
+// For Placement Only Thumbnails
+require get_template_directory() . '/inc/fpo-image.php';
+
 // Custom Post Types 
 require get_template_directory() . '/inc/post-types.php';
 

@@ -46,3 +46,20 @@ function starter_wp_title( $title, $sep ) {
 	return $title;
 }
 add_filter( 'wp_title', 'starter_wp_title', 10, 2 );
+
+
+// Add custom login logo 
+/*
+if ( !function_exists( 'our_custom_login_page_style' ) ) {
+	function our_custom_login_page_style() {
+		$image = wp_get_attachment_image_src( get_field('site_logo', 'option'), 'full' );
+		echo '<style type="text/css">
+		.login h1 a {
+			background-image: url('.$image[0].');
+			background-size: 274px auto;
+		}
+		</style>';
+	}
+}
+add_action('login_head', 'our_custom_login_page_style');
+*/
