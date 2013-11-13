@@ -11,7 +11,7 @@ get_header(); ?>
 
 <div class="row">
 
-	<div id="primary" class="col-lg-8">
+	<div id="primary" class="col-sm-8">
 
 		<?php if ( have_posts() ) : ?>
 
