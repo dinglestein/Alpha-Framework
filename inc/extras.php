@@ -63,3 +63,56 @@ if ( !function_exists( 'our_custom_login_page_style' ) ) {
 }
 add_action('login_head', 'our_custom_login_page_style');
 */
+
+// Add custom login styles 
+if ( !function_exists( 'starter_custom_login_style' ) ) {
+	function starter_custom_login_style() {
+		echo '<style type="text/css">
+			body.login { background: #f1f1f1; } 
+			.login h1 a { max-width: 100%; }
+			.login form {
+				box-shadow: none;
+				-webkit-box-shadow: none;
+				border: none;
+				margin: 0;
+				padding: 30px;
+			}
+			.login #backtoblog a {
+				display: none;
+			}
+			.login #nav a { 
+				text-shadow: none; 
+				color: #58b4db !important;
+			}
+			.login form label { color:#ccc; text-transform: uppercase; font-size: 12px; }
+			.login form .input, .login input[type=text] {
+				border: none;
+				box-shadow: none;
+				background: #f9f9f9;
+				border-radius: 2px;
+				padding: 8px;
+			}
+			.login form .forgetmenot { float: none; }
+			#login form p.submit {
+				padding: 0;
+				width: 100%;
+				height: 45px;
+				margin: 20px 0 0;
+			}
+			.wp-core-ui .button.button-large {
+				border: none;
+				border-radius: 2px;
+				background: #58b4db;
+				line-height: 1;
+				font-size: 14px;
+				text-transform: uppercase;
+				width: 100%;
+				padding: 15px 0;
+				float: left;
+				display: block;
+				height: auto;
+			}	
+		</style>';
+	}
+}
+add_action('login_head', 'starter_custom_login_style');
