@@ -99,6 +99,10 @@ if ( !function_exists( 'starter_custom_login_style' ) ) {
 				height: 45px;
 				margin: 20px 0 0;
 			}
+			#login_error, .login .message {
+				margin: 0 0 16px;
+				border: none;
+			}
 			.wp-core-ui .button.button-large {
 				border: none;
 				border-radius: 2px;
